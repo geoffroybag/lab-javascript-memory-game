@@ -27,6 +27,7 @@ var cards = [
 
 $(document).ready(function(){
   var memoryGame = new MemoryGame(cards);
+  memoryGame.shuffleCards();
   var html = '';
   memoryGame.cards.forEach(function (pic) {
     html += '<div class="card" data-card-name="'+ pic.name +'">';
@@ -38,10 +39,54 @@ $(document).ready(function(){
   // Add all the div's to the HTML
   $('#memory_board').html(html);
 
+
+  var stockCards = [];
   // Bind the click event of each element to a function
-  $('.back').click(function () {
-    // TODO: write some code here
+  $(".back").click(function () {
+     var button = $(event.target);
+      button.toggleClass("back");
+      button.next().addClass("back");
+      stockCards.push(button.attr('name'));
+      console.log(stockCards);
+      
+      if(stockCards.length==2){
+        var checkPair = memoryGame.checkIfPair(stockCards[0], stockCards[1]);
+        $('#pairs_clicked').html(memoryGame.pairsClicked);
+        if (checkPair == false){
+          setTimeout(function(){
+            return hideCards(stockCards);
+            }, 1000);
+            setTimeout(function(){
+              return stockCards = [];
+              }, 1001);
+        }
+        else {
+          $('#pairs_guessed').html(memoryGame.pairsGuessed);
+          stockCards = [];
+        }
+      }
+      else {
+
+      }
   });
+
+
+ 
+  
 });
 
+var memoryGame = new MemoryGame(cards);
 
+
+function hideCards(array){
+  var getFirstCard = document.getElementsByName(array[0]);
+  var getSecondCard = document.getElementsByName([array[1]]);
+  $(getFirstCard[0]).addClass("back")
+  $(getFirstCard[0]).next().removeClass("back")
+  $(getSecondCard[0]).addClass("back")
+  $(getSecondCard[0]).next().removeClass("back")
+  $(getFirstCard[1]).addClass("back")
+  $(getFirstCard[1]).next().removeClass("back")
+  $(getSecondCard[1]).addClass("back")
+  $(getSecondCard[1]).next().removeClass("back")
+}
